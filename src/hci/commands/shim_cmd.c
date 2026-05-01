@@ -107,9 +107,8 @@ static int shim_exec ( int argc, char **argv ) {
 	/* Acquire image, if applicable */
 	if ( download && name_uri &&
 	     ( ( rc = imgacquire ( name_uri, opts.timeout,
-				   &image ) ) != 0 ) ) {
+						NULL, &image ) ) != 0 ) )
 		goto err_image;
-	}
 
 	/* (Un)register as shim */
 	if ( ( rc = shim ( image, opts.require_loader, opts.allow_pxe,

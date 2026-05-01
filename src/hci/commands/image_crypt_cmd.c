@@ -90,11 +90,11 @@ static int imgdecrypt_exec ( int argc, char **argv ) {
 	envelope_name_uri = argv[ optind + 1 ];
 
 	/* Acquire the image */
-	if ( ( rc = imgacquire ( image_name_uri, opts.timeout, &image ) ) != 0 )
+	if ( ( rc = imgacquire ( image_name_uri, opts.timeout, NULL, &image ) ) != 0 )
 		goto err_acquire_image;
 
 	/* Acquire the envelope image */
-	if ( ( rc = imgacquire ( envelope_name_uri, opts.timeout,
+	if ( ( rc = imgacquire ( envelope_name_uri, opts.timeout, NULL,
 				 &envelope ) ) != 0 )
 		goto err_acquire_envelope;
 

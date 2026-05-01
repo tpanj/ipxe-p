@@ -34,6 +34,7 @@ FILE_SECBOOT ( PERMITTED );
 #include <ipxe/monojob.h>
 #include <ipxe/open.h>
 #include <ipxe/uri.h>
+#include <ipxe/params.h>
 #include <usr/imgmgmt.h>
 
 /** @file
@@ -47,14 +48,24 @@ FILE_SECBOOT ( PERMITTED );
  *
  * @v uri		URI
  * @v timeout		Download timeout
+ * @v range		Range
  * @v image		Image to fill in
  * @ret rc		Return status code
  */
 int imgdownload ( struct uri *uri, unsigned long timeout,
-		  struct image **image ) {
+		  const char *range, struct image **image ) {
 	struct uri uri_redacted;
 	char *uri_string_redacted;
+	char *range_bytes = NULL;
 	int rc;
+
+	/* Prepend "bytes=" to range, if applicable */
+	if ( range ) {
+		if ( asprintf ( &range_bytes, "bytes=%s", range ) < 0 ) {
+			rc = -ENOMEM;
+			goto err_range_bytes;
+		}
+	}
 
 	/* Construct redacted URI */
 	memcpy ( &uri_redacted, uri, sizeof ( uri_redacted ) );
@@ -73,6 +84,22 @@ int imgdownload ( struct uri *uri, unsigned long timeout,
 	if ( ! uri ) {
 		rc = -ENOMEM;
 		goto err_resolve_uri;
+	}
+
+	/* Add range, if applicable */
+	if ( range_bytes ) {
+		if ( ! uri->params ) {
+			uri->params = create_parameters ( NULL );
+			if ( ! uri->params ) {
+				rc = -ENOMEM;
+				goto err_create_params;
+			}
+		}
+		if ( ! add_parameter ( uri->params, "Range", range_bytes,
+				       PARAMETER_HEADER ) ) {
+			rc = -ENOMEM;
+			goto err_add_range;
+		}
 	}
 
 	/* Allocate image */
@@ -103,10 +130,14 @@ int imgdownload ( struct uri *uri, unsigned long timeout,
  err_create_downloader:
 	image_put ( *image );
  err_alloc_image:
+ err_add_range:
+ err_create_params:
 	uri_put ( uri );
  err_resolve_uri:
 	free ( uri_string_redacted );
  err_uri_string:
+	free ( range_bytes );
+ err_range_bytes:
 	return rc;
 }
 
@@ -115,18 +146,19 @@ int imgdownload ( struct uri *uri, unsigned long timeout,
  *
  * @v uri_string	URI string
  * @v timeout		Download timeout
+ * @v range		Range
  * @v image		Image to fill in
  * @ret rc		Return status code
  */
 int imgdownload_string ( const char *uri_string, unsigned long timeout,
-			 struct image **image ) {
+			 const char *range, struct image **image ) {
 	struct uri *uri;
 	int rc;
 
 	if ( ! ( uri = parse_uri ( uri_string ) ) )
 		return -ENOMEM;
 
-	rc = imgdownload ( uri, timeout, image );
+	rc = imgdownload ( uri, timeout, range, image );
 
 	uri_put ( uri );
 	return rc;
@@ -137,11 +169,12 @@ int imgdownload_string ( const char *uri_string, unsigned long timeout,
  *
  * @v name_uri		Name or URI string
  * @v timeout		Download timeout
+ * @v range		Range
  * @v image		Image to fill in
  * @ret rc		Return status code
  */
 int imgacquire ( const char *name_uri, unsigned long timeout,
-		 struct image **image ) {
+		 const char *range, struct image **image ) {
 
 	/* If we already have an image with the specified name, use it */
 	*image = find_image ( name_uri );
@@ -149,7 +182,7 @@ int imgacquire ( const char *name_uri, unsigned long timeout,
 		return 0;
 
 	/* Otherwise, download a new image */
-	return imgdownload_string ( name_uri, timeout, image );
+	return imgdownload_string ( name_uri, timeout, range, image );
 }
 
 /**

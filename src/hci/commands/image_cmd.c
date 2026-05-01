@@ -52,16 +52,18 @@ struct imgsingle_options {
 	int replace;
 	/** Free image after execution */
 	int autofree;
+	/** Range */
+	char *range;
 };
 
 /** "img{single}" option list */
 static union {
-	/* "imgexec" takes all three options */
-	struct option_descriptor imgexec[4];
+	/* "imgexec" takes all four options */
+	struct option_descriptor imgexec[5];
 	/* Other "img{single}" commands take only --name, --timeout,
-	 * and --autofree
+	 * --autofree, and --range
 	 */
-	struct option_descriptor imgsingle[3];
+	struct option_descriptor imgsingle[4];
 } opts = {
 	.imgexec = {
 		OPTION_DESC ( "name", 'n', required_argument,
@@ -70,6 +72,8 @@ static union {
 			      struct imgsingle_options, timeout, parse_timeout),
 		OPTION_DESC ( "autofree", 'a', no_argument,
 			      struct imgsingle_options, autofree, parse_flag ),
+		OPTION_DESC ( "range", 0, required_argument,
+			      struct imgsingle_options, range, parse_string ),
 		OPTION_DESC ( "replace", 'r', no_argument,
 			      struct imgsingle_options, replace, parse_flag ),
 	},
@@ -81,7 +85,7 @@ struct imgsingle_descriptor {
 	struct command_descriptor *cmd;
 	/** Function to use to acquire the image */
 	int ( * acquire ) ( const char *name, unsigned long timeout,
-			    struct image **image );
+			    const char *range, struct image **image );
 	/** Pre-action to take upon image, or NULL */
 	void ( * preaction ) ( struct image *image );
 	/** Action to take upon image, or NULL */
@@ -128,7 +132,7 @@ static int imgsingle_exec ( int argc, char **argv,
 	/* Acquire the image */
 	if ( name_uri ) {
 		if ( ( rc = desc->acquire ( name_uri, opts.timeout,
-					    &image ) ) != 0 )
+					    opts.range, &image ) ) != 0 )
 			goto err_acquire;
 	} else {
 		image = find_image_tag ( &selected_image );
@@ -189,7 +193,7 @@ static int imgsingle_exec ( int argc, char **argv,
 /** "imgfetch" command descriptor */
 static struct command_descriptor imgfetch_cmd =
 	COMMAND_DESC ( struct imgsingle_options, opts.imgsingle,
-		       1, MAX_ARGUMENTS, "<uri> [<arguments>...]" );
+		       1, MAX_ARGUMENTS, "[--range <range>] <uri> [<arguments>...]" );
 
 /** "imgfetch" family command descriptor */
 struct imgsingle_descriptor imgfetch_desc = {
@@ -223,7 +227,7 @@ static int imgselect ( struct image *image,
 /** "imgselect" command descriptor */
 static struct command_descriptor imgselect_cmd =
 	COMMAND_DESC ( struct imgsingle_options, opts.imgsingle,
-		       1, MAX_ARGUMENTS, "<uri|image> [<arguments>...]" );
+		       1, MAX_ARGUMENTS, "[--range <range>] <uri|image> [<arguments>...]" );
 
 /** "imgselect" family command descriptor */
 struct imgsingle_descriptor imgselect_desc = {
@@ -247,7 +251,7 @@ static int imgselect_exec ( int argc, char **argv ) {
 /** "imgexec" command descriptor */
 static struct command_descriptor imgexec_cmd =
 	COMMAND_DESC ( struct imgsingle_options, opts.imgexec,
-		       0, MAX_ARGUMENTS, "[<uri|image> [<arguments>...]]" );
+		       0, MAX_ARGUMENTS, "[--range <range>] [<uri|image> [<arguments>...]]" );
 
 /**
  * "imgexec" command action
@@ -301,7 +305,7 @@ static int imgexec_exec ( int argc, char **argv) {
 /** "imgargs" command descriptor */
 static struct command_descriptor imgargs_cmd =
 	COMMAND_DESC ( struct imgsingle_options, opts.imgsingle,
-		       1, MAX_ARGUMENTS, "<uri|image> [<arguments>...]" );
+		       1, MAX_ARGUMENTS, "[--range <range>] <uri|image> [<arguments>...]" );
 
 /** "imgargs" family command descriptor */
 struct imgsingle_descriptor imgargs_desc = {

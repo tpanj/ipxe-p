@@ -74,9 +74,8 @@ static int fdt_exec ( int argc, char **argv ) {
 
 	/* Acquire image, if applicable */
 	if ( name_uri && ( ( rc = imgacquire ( name_uri, opts.timeout,
-					       &image ) ) != 0 ) ) {
+						NULL, &image ) ) != 0 ) )
 		goto err_image;
-	}
 
 	/* (Un)register as FDT */
 	if ( ( rc = imgfdt ( image ) ) != 0 )

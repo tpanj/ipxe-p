@@ -78,7 +78,7 @@ static int imgextract_exec ( int argc, char **argv ) {
 		goto err_parse;
 
 	/* Acquire image */
-	if ( ( rc = imgacquire ( argv[optind], opts.timeout, &image ) ) != 0 )
+	if ( ( rc = imgacquire ( argv[optind], opts.timeout, NULL, &image ) ) != 0 )
 		goto err_acquire;
 
 	/* Extract archive image */

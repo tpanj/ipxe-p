@@ -137,11 +137,11 @@ static int imgverify_exec ( int argc, char **argv ) {
 	signature_name_uri = argv[ optind + 1 ];
 
 	/* Acquire the image */
-	if ( ( rc = imgacquire ( image_name_uri, opts.timeout, &image ) ) != 0 )
+	if ( ( rc = imgacquire ( image_name_uri, opts.timeout, NULL, &image ) ) != 0 )
 		goto err_acquire_image;
 
 	/* Acquire the signature image */
-	if ( ( rc = imgacquire ( signature_name_uri, opts.timeout,
+	if ( ( rc = imgacquire ( signature_name_uri, opts.timeout, NULL,
 				 &signature ) ) != 0 )
 		goto err_acquire_signature;
 
