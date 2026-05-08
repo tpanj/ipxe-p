@@ -145,7 +145,7 @@ FILE_SECBOOT ( PERMITTED );
 #if defined ( PLATFORM_pcbios )
   #undef CERT_CMD
   #undef CONSOLE_CMD
-  #undef DIGEST_CMD
+  //#undef DIGEST_CMD
   #undef NTP_CMD
   #undef PARAM_CMD
   #undef PCI_CMD
