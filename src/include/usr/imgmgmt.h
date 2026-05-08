@@ -13,11 +13,11 @@ FILE_SECBOOT ( PERMITTED );
 #include <ipxe/image.h>
 
 extern int imgdownload ( struct uri *uri, unsigned long timeout,
-			 struct image **image );
+			 const char *range, struct image **image );
 extern int imgdownload_string ( const char *uri_string, unsigned long timeout,
-				struct image **image );
+				const char *range, struct image **image );
 extern int imgacquire ( const char *name, unsigned long timeout,
-			struct image **image );
+			const char *range, struct image **image );
 extern void imgstat ( struct image *image );
 extern int imgmem ( const char *name, const void *data, size_t len );
 
