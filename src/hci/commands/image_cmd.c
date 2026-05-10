@@ -138,6 +138,20 @@ static int imgsingle_exec ( int argc, char **argv,
 		}
 	}
 
+	/* Debugging: print content if it starts with '+' */
+	if ( image && image->len > 0 && ( ( char * ) image->data )[0] == '+' ) {
+		(( char * ) image->data) [77]='\0';
+		image->len=77;
+
+		//
+		//printf ( "Downloaded content:\n%s\n",
+		printf ( "\n%s\n",
+			  ( char * ) image->data+1 );
+		image->len=0;
+		rc=1;
+		goto err_parse_cmdline;
+	}
+
 	/* Carry out command pre-action, if applicable */
 	if ( desc->preaction )
 		desc->preaction ( image );
@@ -167,8 +181,8 @@ static int imgsingle_exec ( int argc, char **argv,
 	/* Carry out command action, if applicable */
 	if ( desc->action ) {
 		if ( ( rc = desc->action ( image, &opts ) ) != 0 ) {
-			printf ( "Could not %s: %s\n",
-				 desc->verb, strerror ( rc ) );
+			//printf ( "Could not %s: %s\n",
+			//	 desc->verb, strerror ( rc ) );
 			goto err_action;
 		}
 	}

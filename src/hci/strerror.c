@@ -98,7 +98,7 @@ char * strerror ( int errno ) {
 			   errno, errno );
 	}
 
-	return errbuf;
+	return ""; //errbuf;
 }
 
 /* Do not include ERRFILE portion in the numbers in the error table */

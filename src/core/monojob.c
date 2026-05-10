@@ -95,6 +95,7 @@ int monojob_wait ( const char *string, unsigned long timeout ) {
 	int key;
 	int rc;
 
+	if (0)
 	if ( string )
 		printf ( "%s...", string );
 	monojob_rc = -EINPROGRESS;
@@ -167,6 +168,7 @@ int monojob_wait ( const char *string, unsigned long timeout ) {
 		if ( rc ) {
 			printf ( " %s\n", strerror ( rc ) );
 		} else {
+	if (0)
 			printf ( " ok\n" );
 		}
 	}

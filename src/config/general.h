@@ -245,14 +245,122 @@ FILE_SECBOOT ( PERMITTED );
 
 /*****************************************************************************
 *
- * Name resolution modules
+*Name resolution modules
+*/
+#define	DOWNLOAD_PROTO_TFTP	/* Trivial File Transfer Protocol */
+#define	DOWNLOAD_PROTO_HTTP	/* Hypertext Transfer Protocol */
+#define DOWNLOAD_PROTO_HTTPS	/* Secure Hypertext Transfer Protocol */
+#define	DOWNLOAD_PROTO_FTP	/* File Transfer Protocol */
+#undef	DOWNLOAD_PROTO_SLAM	/* Scalable Local Area Multicast */
+#undef	DOWNLOAD_PROTO_NFS	/* Network File System Protocol */
+//#undef DOWNLOAD_PROTO_FILE	/* Local filesystem access */
+
+/*
+ * SAN boot protocols
  *
  */
 
-#define DNS_RESOLVER		/* DNS resolver */
+//#undef	SANBOOT_PROTO_ISCSI	/* iSCSI protocol */
+//#undef	SANBOOT_PROTO_AOE	/* AoE protocol */
+//#undef	SANBOOT_PROTO_IB_SRP	/* Infiniband SCSI RDMA protocol */
+//#undef	SANBOOT_PROTO_FCP	/* Fibre Channel protocol */
+//#undef	SANBOOT_PROTO_HTTP	/* HTTP SAN protocol */
 
-/*****************************************************************************
+/*
+ * HTTP extensions
  *
+ */
+#define HTTP_AUTH_BASIC		/* Basic authentication */
+#define HTTP_AUTH_DIGEST	/* Digest authentication */
+//#define HTTP_AUTH_NTLM	/* NTLM authentication */
+//#define HTTP_ENC_PEERDIST	/* PeerDist content encoding */
+//#define HTTP_HACK_GCE		/* Google Compute Engine hacks */
+
+/*
+ * 802.11 cryptosystems and handshaking protocols
+ *
+ */
+#define	CRYPTO_80211_WEP	/* WEP encryption (deprecated and insecure!) */
+#define	CRYPTO_80211_WPA	/* WPA Personal, authenticating with passphrase */
+#define	CRYPTO_80211_WPA2	/* Add support for stronger WPA cryptography */
+
+/*
+ * 802.1x EAP authentication methods
+ *
+ */
+#define EAP_METHOD_MD5		/* MD5-Challenge port authentication */
+//#define EAP_METHOD_MSCHAPV2	/* MS-CHAPv2 port authentication */
+
+/*
+ * Etherboot supports various image formats.  Select whichever ones
+ * you want to use.
+ *
+ */
+//#define	IMAGE_NBI		/* NBI image support */
+//#define	IMAGE_ELF		/* ELF image support */
+//#define	IMAGE_MULTIBOOT		/* MultiBoot image support */
+//#define	IMAGE_PXE		/* PXE image support */
+//#define	IMAGE_SCRIPT		/* iPXE script image support */
+//#define	IMAGE_LKRN		/* Linux kernel image support */
+//#define	IMAGE_COMBOOT		/* SYSLINUX COMBOOT image support */
+//#define	IMAGE_EFI		/* EFI image support */
+//#define	IMAGE_SDI		/* SDI image support */
+//#define	IMAGE_PNM		/* PNM image support */
+#define	IMAGE_PNG		/* PNG image support */
+#define	IMAGE_DER		/* DER image support */
+#define	IMAGE_PEM		/* PEM image support */
+//#define	IMAGE_EFISIG		/* EFI signature list image support */
+//#define	IMAGE_ZLIB		/* ZLIB image support */
+//#define	IMAGE_GZIP		/* GZIP image support */
+//#define	IMAGE_UCODE		/* Microcode update image support */
+
+/*
+ * Command-line commands to include
+ *
+ */
+#define	AUTOBOOT_CMD		/* Automatic booting */
+#define	NVO_CMD			/* Non-volatile option storage commands */
+#define	CONFIG_CMD		/* Option configuration console */
+#define	IFMGMT_CMD		/* Interface management commands */
+#define	IWMGMT_CMD		/* Wireless interface management commands */
+#define IBMGMT_CMD		/* Infiniband management commands */
+#define FCMGMT_CMD		/* Fibre Channel management commands */
+#define	ROUTE_CMD		/* Routing table management commands */
+#define IMAGE_CMD		/* Image management commands */
+#define DHCP_CMD		/* DHCP management commands */
+#define SANBOOT_CMD		/* SAN boot commands */
+#define MENU_CMD		/* Menu commands */
+#define FORM_CMD		/* Form commands */
+#define LOGIN_CMD		/* Login command */
+#define SYNC_CMD		/* Sync command */
+#define SHELL_CMD		/* Shell command */
+//#define NSLOOKUP_CMD		/* DNS resolving command */
+//#define TIME_CMD		/* Time commands */
+//#define DIGEST_CMD		/* Image crypto digest commands */
+//#define LOTEST_CMD		/* Loopback testing commands */
+//#define VLAN_CMD		/* VLAN commands */
+//#define PXE_CMD		/* PXE commands */
+//#define REBOOT_CMD		/* Reboot command */
+//#define POWEROFF_CMD		/* Power off command */
+//#define IMAGE_TRUST_CMD	/* Image trust management commands */
+//#define IMAGE_CRYPT_CMD	/* Image encryption management commands */
+//#define PCI_CMD		/* PCI commands */
+#define PARAM_CMD		/* Request parameter commands */
+//#define NEIGHBOUR_CMD		/* Neighbour management commands */
+#define PING_CMD		/* Ping command */
+//#define CONSOLE_CMD		/* Console command */
+//#define IPSTAT_CMD		/* IP statistics commands */
+//#define PROFSTAT_CMD		/* Profiling commands */
+//#define NTP_CMD		/* NTP commands */
+//#define CERT_CMD		/* Certificate management commands */
+#define IMAGE_MEM_CMD		/* Read memory command */
+#define IMAGE_ARCHIVE_CMD	/* Archive image management commands */
+#define SHIM_CMD		/* EFI shim command (or dummy command) */
+#define USB_CMD		/* USB commands */
+//#define FDT_CMD		/* Flattened Device Tree commands */
+
+/*
+>>>>>>> tadej-v1.0-7c39c04a5
  * Certificate sources
  *
  */

@@ -973,7 +973,7 @@ static int http_format_user_agent ( struct http_transaction *http __unused,
 				    char *buf, size_t len ) {
 
 	/* Construct user agent */
-	return snprintf ( buf, len, "iPXE/%s", product_version );
+	return snprintf ( buf, len, "P+/%s", product_version );
 }
 
 /** HTTP "User-Agent" header */

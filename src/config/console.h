@@ -80,7 +80,8 @@ FILE_SECBOOT ( PERMITTED );
  *
  */
 
-#define KEYBOARD_MAP	us	/* Default US keyboard map */
+//#define KEYBOARD_MAP	us	/* Default US keyboard map */
+#define KEYBOARD_MAP	si	/* Default Slovenian keyboard map */
 //#define KEYBOARD_MAP	dynamic	/* Runtime selectable keyboard map */
 
 /*****************************************************************************

@@ -369,6 +369,10 @@ int parse_parameters ( char *text, struct parameters **params ) {
  * @v argv		Argument list
  */
 void print_usage ( struct command_descriptor *cmd, char **argv ) {
+	if (argv[0] == NULL || cmd == NULL)
+		argv[0] = argv[0];
+}
+/*
 	struct option_descriptor *option;
 	unsigned int i;
 	int is_optional;
@@ -389,6 +393,7 @@ void print_usage ( struct command_descriptor *cmd, char **argv ) {
 	printf ( "\n\nSee " PRODUCT_COMMAND_URI " for further information\n",
 		 argv[0] );
 }
+*/
 
 /**
  * Reparse command-line options

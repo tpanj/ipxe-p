@@ -46,6 +46,7 @@ FILE_SECBOOT ( PERMITTED );
 #include <usr/route.h>
 #include <usr/imgmgmt.h>
 #include <usr/prompt.h>
+#include <readline/readline.h>
 #include <usr/autoboot.h>
 #include <config/general.h>
 #include <config/branding.h>
@@ -391,10 +392,13 @@ static int have_pxe_menu ( void ) {
  */
 int netboot ( struct net_device *netdev ) {
 	struct san_boot_config san_config;
-	struct uri *filename;
-	struct uri *root_path;
+	struct uri filename_data = {.scheme = "http", .host = "boot.ipxe.org", .path = "/demo/boot.php", .port = "80"};
+	//struct uri *filename = &filename_data;
+	struct uri *root_path = &filename_data;
 	char *san_filename;
 	int rc;
+        // struct image *image;
+	// struct imgsingle_descriptor *desc;
 
 	/* Close all other network devices */
 	close_other_netdevs ( netdev );
@@ -409,31 +413,40 @@ int netboot ( struct net_device *netdev ) {
 		goto err_dhcp;
 	route();
 
+		char *rl = readline ( "\nEnter username:> " );
+		printf ("image: [%s] ", root_path->host);
+		printf ("You Entered [%s] ", rl);
+		free(rl);
+
 	/* Try PXE menu boot, if applicable */
-	if ( have_pxe_menu() ) {
+	if (0 && have_pxe_menu() ) {
 		printf ( "Booting from PXE menu\n" );
 		rc = pxe_menu_boot ( netdev );
 		goto err_pxe_menu_boot;
 	}
 
-	/* Fetch next server and filename (if any) */
+	/* Fetch next server and filename (if any) 
+	if (0)
 	filename = fetch_next_server_and_filename ( NULL );
-
+*/
 	/* Fetch root path (if any) */
+	if (0)
 	root_path = fetch_root_path ( NULL );
 
 	/* Fetch SAN filename (if any) */
+	if (0)
 	san_filename = fetch_san_filename ( NULL );
 
 	/* Construct SAN boot configuration parameters */
 	memset ( &san_config, 0, sizeof ( san_config ) );
+	if (0)
 	san_config.filename = san_filename;
 
 	/* If we have both a filename and a root path, ignore an
 	 * unsupported or missing URI scheme in the root path, since
 	 * it may represent an NFS root.
 	 */
-	if ( filename && root_path &&
+	if ( /*filename &&*/ root_path &&
 	     ( ( ! uri_is_absolute ( root_path ) ) ||
 	       ( xfer_uri_opener ( root_path->scheme ) == NULL ) ) ) {
 		printf ( "Ignoring unsupported root path\n" );
@@ -442,23 +455,23 @@ int netboot ( struct net_device *netdev ) {
 	}
 
 	/* Check that we have something to boot */
-	if ( ! ( filename || root_path ) ) {
+	if ( ! ( /*filename ||*/ root_path ) ) {
 		rc = -ENOENT_BOOT;
 		printf ( "Nothing to boot: %s\n", strerror ( rc ) );
 		goto err_no_boot;
 	}
 
-	/* Boot using next server, filename and root path */
+	/* Boot using next server, filename and root path
 	if ( ( rc = uriboot ( filename, &root_path, ( root_path ? 1 : 0 ),
 			      san_default_drive(), &san_config,
 			      ( root_path ? 0 : URIBOOT_NO_SAN ) ) ) != 0 )
 		goto err_uriboot;
-
  err_uriboot:
+ */
  err_no_boot:
-	free ( san_filename );
+	//free ( san_filename );
 	uri_put ( root_path );
-	uri_put ( filename );
+	//uri_put ( filename );
  err_pxe_menu_boot:
  err_dhcp:
  err_ifopen:
@@ -577,6 +590,34 @@ static int shell_banner ( void ) {
 			  CTRL_B ) == 0 );
 }
 
+#define RDLINE 2048
+
+void replace_whitespace(char *str) {
+    int i; 
+
+    if (str == NULL) {
+        return; /* Handle null pointer */
+    }
+
+    /* * The loop is the same, but 'i' was declared above.
+     * We loop until we hit the null terminator ('\0')
+     */
+    for (i = 0; str[i] != '\0' && i<RDLINE-1; i++) {
+	    if(i>11 && str[i] == ' ')
+		    str[i] = '+';
+    }
+    str[i++] = '#';
+    str[i++] = '#';
+    str[i++] = 'p';
+    str[i++] = 'a';
+    str[i++] = 'r';
+    str[i++] = 'a';
+    str[i++] = 'm';
+    str[i++] = 's';
+    str[i++] = '\0';
+    str[RDLINE-1] = '\0';
+}
+
 /**
  * Main iPXE flow of execution
  *
@@ -584,7 +625,7 @@ static int shell_banner ( void ) {
  * @ret rc		Return status code
  */
 int ipxe ( struct net_device *netdev ) {
-	struct feature *feature;
+	//struct feature *feature;
 	struct image *image;
 	char *scriptlet;
 	int rc;
@@ -600,21 +641,51 @@ int ipxe ( struct net_device *netdev ) {
 	 * references to iPXE or https://ipxe.org, we prefer you not
 	 * to do so.
 	 *
-	 */
 	printf ( NORMAL "\n\n" PRODUCT_NAME "\n" BOLD PRODUCT_SHORT_NAME " %s"
 		 NORMAL " -- " PRODUCT_TAG_LINE " -- "
 		 CYAN PRODUCT_URI NORMAL "\nFeatures:", product_version );
 	for_each_table_entry ( feature, FEATURES )
 		printf ( " %s", feature->name );
 	printf ( "\n" );
+	 */
 
 	/* Boot system */
 	if ( ( image = first_image() ) != NULL ) {
 		/* We have an embedded image; execute it */
 		return image_exec ( image );
-	} else if ( shell_banner() ) {
-		/* User wants shell; just give them a shell */
-		return shell();
+	} else if ( 1 ) { //shell_banner() ) {
+		/* User wants shell; just give them a shell
+		return shell(); */
+		/* User wants to bypass autoboot; run dhcp and chain load */
+		printf ( 	"\n\n\n\n\n\n\n\n\n\n\n\n"
+			"                                                                    " 
+			CYAN "beta" NORMAL BOLD " P+"  NORMAL "\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+		int errDhcp = system ( "dhcp" );
+		printf ("\n\n\n");
+		if (!errDhcp) {
+			printf ("Enter Name, what you want to do with computer today:\n" );
+		}
+		else {
+			printf ("CONNECT TO INTERNET ERROR. Check cables, restart computer to here." );
+		}
+		int r = 1;
+		while (r) {
+			char chainurl[RDLINE] = "chain https://ai-boot.pridobi.si/?";
+			system ( "params" );
+			system ( "param mc ${net0/mac}" );
+			system ( "param mm ${memsize}" );
+			system ( "param id ${uuid}" );
+
+			char *rl = readline ( ":> " );
+			//printf ("You Entered [%s] ", rl);
+			strcat(chainurl, rl);
+			free(rl);
+			replace_whitespace(chainurl);
+			//printf ("You set [%s] ", chainurl);
+			r=system ( chainurl );
+		}
+		return r;
+		//return system ( "chain http://boot.ipxe.org/demo/boot.php" );
 	} else {
 		fetch_string_setting_copy ( NULL, &scriptlet_setting,
 					    &scriptlet );

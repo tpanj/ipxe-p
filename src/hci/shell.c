@@ -123,6 +123,8 @@ static int shell_exec ( int argc, char **argv ) {
 	struct shell_options opts;
 	int rc;
 
+	shell_stop ( SHELL_STOP_COMMAND_SEQUENCE );
+	return -1;
 	/* Parse options */
 	if ( ( rc = parse_options ( argc, argv, &shell_cmd, &opts ) ) != 0 )
 		return rc;
