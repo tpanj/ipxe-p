@@ -536,5 +536,27 @@ struct root_device pci_root_device __root_device = {
 /* Drag in objects via pcibus_probe() */
 REQUIRING_SYMBOL ( pcibus_probe );
 
+/**
+ * Print all PCI devices
+ *
+ * @ret count		Number of PCI devices found
+ */
+int print_pci_devices ( void ) {
+	struct pci_device pci;
+	uint32_t busdevfn = 0;
+	int count = 0;
+
+	do {
+		if ( pci_find_next ( &pci, &busdevfn ) != 0 )
+			break;
+		printf ( "%02x:%02x.%x %04x:%04x\n",
+			 PCI_BUS ( pci.busdevfn ), PCI_SLOT ( pci.busdevfn ),
+			 PCI_FUNC ( pci.busdevfn ), pci.vendor, pci.device );
+		count++;
+	} while ( ++busdevfn );
+
+	return count;
+}
+
 /* Drag in PCI configuration */
 REQUIRE_OBJECT ( config_pci );
