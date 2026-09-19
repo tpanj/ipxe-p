@@ -33,7 +33,7 @@ FILE_LICENCE ( GPL2_OR_LATER_OR_UBDL );
 static void pci_test_exec ( void ) {
 	int count;
 
-	count = print_pci_devices();
+	count = print_pci_devices ( 0 );
 	ok ( count >= 0 );
 }
 

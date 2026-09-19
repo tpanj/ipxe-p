@@ -331,7 +331,7 @@ extern int pci_find_capability ( struct pci_device *pci, int capability );
 extern int pci_find_next_capability ( struct pci_device *pci,
 				      int pos, int capability );
 extern void pci_reset ( struct pci_device *pci, unsigned int exp );
-extern int print_pci_devices ( void );
+extern int print_pci_devices ( int start );
 
 /**
  * Initialise PCI device
