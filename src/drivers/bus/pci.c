@@ -35,6 +35,7 @@ FILE_SECBOOT ( PERMITTED );
 #include <ipxe/tables.h>
 #include <ipxe/device.h>
 #include <ipxe/pci.h>
+#include <ipxe/command.h>
 
 /** @file
  *
@@ -535,6 +536,42 @@ struct root_device pci_root_device __root_device = {
 
 /* Drag in objects via pcibus_probe() */
 REQUIRING_SYMBOL ( pcibus_probe );
+
+/**
+ * Print all PCI devices
+ *
+ * @v start		Start parameter (0 to print, >0 to set params)
+ * @ret count		Number of PCI devices found
+ */
+int print_pci_devices ( int start ) {
+	struct pci_device pci;
+	uint32_t busdevfn = 0;
+	int count = 0;
+	char buffer[128];
+	char cmd[256];
+
+	do {
+		if ( pci_find_next ( &pci, &busdevfn ) != 0 )
+			break;
+		snprintf ( buffer, sizeof ( buffer ),
+			   "%02x:%02x.%x %04x: %04x:%04x",
+			   PCI_BUS ( pci.busdevfn ),
+			   PCI_SLOT ( pci.busdevfn ),
+			   PCI_FUNC ( pci.busdevfn ),
+			   ( unsigned int ) ( pci.class >> 8 ),
+			   pci.vendor, pci.device );
+		if ( start > 0 ) {
+			snprintf ( cmd, sizeof ( cmd ), "param h%d %s",
+				   start + count, buffer );
+			system ( cmd );
+		} else {
+			printf ( "%s\n", buffer );
+		}
+		count++;
+	} while ( ++busdevfn );
+
+	return count;
+}
 
 /* Drag in PCI configuration */
 REQUIRE_OBJECT ( config_pci );
