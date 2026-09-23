@@ -297,6 +297,9 @@ REQUIRE_OBJECT ( cert_cmd );
 #ifdef IMAGE_MEM_CMD
 REQUIRE_OBJECT ( image_mem_cmd );
 #endif
+#ifdef MEM_CMD
+REQUIRE_OBJECT ( mem_cmd );
+#endif
 #ifdef SHIM_CMD
 REQUIRE_OBJECT ( shim_cmd );
 #endif
