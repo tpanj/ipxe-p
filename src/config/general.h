@@ -106,6 +106,7 @@ FILE_SECBOOT ( PERMITTED );
 #define IWMGMT_CMD		/* Wireless interface management commands */
 #define LOGIN_CMD		/* Login command */
 //#define LOTEST_CMD		/* Loopback testing commands */
+#define MEM_CMD			/* Memory read/write commands */
 #define MENU_CMD		/* Menu commands */
 //#define NEIGHBOUR_CMD		/* Neighbour management commands */
 //#define NSLOOKUP_CMD		/* DNS resolving command */
