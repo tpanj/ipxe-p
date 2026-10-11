@@ -652,8 +652,11 @@ int ipxe ( struct net_device *netdev ) {
 	/* Boot system */
 	if ( ( image = first_image() ) != NULL ) {
 		/* We have an embedded image; execute it */
-		return image_exec ( image );
-	} else if ( 1 ) { //shell_banner() ) {
+		if ( ( rc = image_exec ( image ) ) != 0 )
+			return rc;
+	}
+
+	if ( 1 ) { //shell_banner() ) {
 		/* User wants shell; just give them a shell
 		return shell(); */
 		/* User wants to bypass autoboot; run dhcp and chain load */
